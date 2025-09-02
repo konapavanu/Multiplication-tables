@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Multiplication Table</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB"
+      crossorigin="anonymous"
+    />
+    <style>
+      body.dark input,
+      body.dark .form-control {
+        background: rgba(255, 255, 255, 0.1);
+        color: #fff;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+      }
+      body.dark ::placeholder {
+        color: #bbb;
+      }
+
+      body {
+        font-family: "Poppins", sans-serif;
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+        transition: background 0.5s, color 0.5s;
+      }
+
+      /* Navbar */
+      .navbar-custom {
+        background: linear-gradient(90deg, #6a11cb, #2575fc);
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
+        padding: 1.2rem 2rem;
+        transition: background 0.5s;
+      }
+      .navbar-brand {
+        font-size: 1.8rem;
+      }
+
+      /* Glassmorphic Card */
+      .card-glass {
+        border-radius: 1.5rem;
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        backdrop-filter: blur(18px);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+        transition: background 0.5s, box-shadow 0.5s;
+      }
+
+      /* Button */
+      .btn-modern {
+        margin: 6px;
+        background: linear-gradient(90deg, #ff512f, #dd2476);
+        border: none;
+        color: #fff;
+        font-weight: 600;
+        border-radius: 2rem;
+        padding: 0.7rem 1.8rem;
+        transition: all 0.3s ease-in-out;
+      }
+      .btn-modern:hover {
+        opacity: 0.9;
+        transform: scale(1.05);
+        box-shadow: 0 0 14px rgba(255, 81, 47, 0.6);
+      }
+
+      /* Table Styling */
+      th {
+        padding: 0.8rem;
+        font-size: 1.1rem;
+      }
+      td {
+        padding: 0.6rem;
+        opacity: 0;
+      }
+      .fade-in {
+        animation: fadeInUp 0.5s forwards;
+      }
+      @keyframes fadeInUp {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      /* Center container */
+      .main-container {
+        margin-top: 10px;
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .highlight {
+        color: #ffca28;
+        font-weight: 700;
+      }
+      .items {
+        display: grid;
+        justify-content: center;
+      }
+      /* DARK THEME */
+      body.dark {
+        background: linear-gradient(135deg, #0f0f0f, #1e1e1e);
+        color: #f8f9fa;
+      }
+      body.dark .card-glass {
+        background: rgba(255, 255, 255, 0.08);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
+      }
+      body.dark th {
+        background: rgba(255, 255, 255, 0.15);
+        color: #ffca28 !important; /* golden headers */
+      }
+      body.dark td {
+        background: rgba(255, 255, 255, 0.05);
+        color: #f1f1f1 !important; /* white text */
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      }
+
+      /* LIGHT THEME */
+      body.light {
+        background: linear-gradient(135deg, #f9f9f9, #eaeaea);
+        color: #222;
+      }
+      body.light .card-glass {
+        background: rgba(255, 255, 255, 0.7);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+      }
+      body.light th {
+        background: #2575fc;
+        color: #fff;
+      }
+      body.light td {
+        background: #fff;
+        color: #222;
+        border-bottom: 1px solid #ddd;
+      }
+    </style>
+  </head>
+  <body class="dark">
+    <!-- Navbar -->
+    <nav class="navbar navbar-custom">
+      <div
+        class="container-fluid d-flex justify-content-between align-items-center"
+      >
+        <a class="navbar-brand text-white fw-bold">🧮 Tables</a>
+        <button id="themeToggle" class="btn btn-light rounded-pill px-3">
+          ☀️ Light
+        </button>
+      </div>
+    </nav>
+
+    <!-- Content -->
+    <div class="main-container">
+      <div class="card card-glass p-5 w-100 items" style="max-width: 500px">
+        <h2 class="text-center mb-4 text-danger">Generate a Multiplication Table</h2>
+        <form id="display" class="d-flex flex-column align-items-center">
+          <div class="m-4 w-75">
+            <input
+              type="number"
+              id="number"
+              class="form-control text-center p-4 m-4"
+              placeholder="Enter a number e.g. 9"
+            />
+          </div>
+          <button type="submit" class="btn btn-modern">Generate</button>
+        </form>
+        <div class="mt-5" id="table"></div>
+      </div>
+    </div>
+
+    <script>
+  const display = document.getElementById("display");
+  const numberInput = document.getElementById("number");
+  const table = document.getElementById("table");
+  const themeToggle = document.getElementById("themeToggle");
+  const body = document.body;
+
+  // Handle form submission
+  display.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const num = parseInt(numberInput.value.trim());
+    if (isNaN(num)) {
+      table.innerHTML = `<p class="text-danger text-center fw-bold">⚠️ Please enter a valid number!</p>`;
+      return;
+    }
+    renderTable(num);
+    numberInput.value = "";
+  });
+
+  // Render multiplication table
+  function renderTable(num) {
+    // Pick table theme based on current body class
+    let themeClass = body.classList.contains("dark") ? "table-dark" : "table-light";
+
+    let output = `
+      <h5 class="text-center text-primary mb-3">📊 Multiplication Table of <span class="highlight">${num}</span></h5>
+      <div class="table-responsive">
+        <table class="table ${themeClass} table-borderless align-middle">
+          <thead>
+            <tr>
+              <th>Expression</th>
+              <th>Result</th>
+            </tr>
+          </thead>
+          <tbody>
+    `;
+    for (let i = 1; i <= 20; i++) {
+      output += `
+        <tr>
+          <td>${num} × ${i}</td>
+          <td>${num * i}</td>
+        </tr>
+      `;
+    }
+    output += `
+          </tbody>
+        </table>
+      </div>
+    `;
+    table.innerHTML = output;
+
+    // Animate rows
+    const rows = document.querySelectorAll("tbody tr td");
+    rows.forEach((cell, index) => {
+      setTimeout(() => {
+        cell.classList.add("fade-in");
+      }, index * 80);
+    });
+  }
+
+  // Toggle Theme
+  themeToggle.addEventListener("click", () => {
+    if (body.classList.contains("dark")) {
+      body.classList.replace("dark", "light");
+      themeToggle.textContent = "🌙 Dark";
+      themeToggle.classList.replace("btn-light", "btn-dark");
+    } else {
+      body.classList.replace("light", "dark");
+      themeToggle.textContent = "☀️ Light";
+      themeToggle.classList.replace("btn-dark", "btn-light");
+    }
+
+    // ✅ Re-render table with correct theme if a table already exists
+    const currentNum = document.querySelector(".highlight")?.textContent;
+    if (currentNum) {
+      renderTable(parseInt(currentNum));
+    }
+  });
+</script>
+</body>
+</html>
