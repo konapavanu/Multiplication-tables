@@ -17,6 +17,9 @@ The app supports **Light 🌞 and Dark 🌙 themes**, with smooth animations for
 ## 🚀 Demo
 <img width="1913" height="922" alt="Image" src="https://github.com/user-attachments/assets/42d6d77e-98b3-4c4a-a889-3526e2f8e394" />
 
+
+Run this server: https://learn-table.netlify.app/
+
 ---
 
 ## 📂 Project Structure
